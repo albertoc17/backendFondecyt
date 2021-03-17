@@ -16,17 +16,17 @@ class FileUploadView(APIView):
         # tipo_analisis = request.POST['tipo_analisis']
         up_file = request.FILES['file']
         #  llamadas 
-        destination = open('fondecyt_backend/Docs/' + up_file.name, 'wb+')
+        destination = open('backendFondecyt/Docs/' + up_file.name, 'wb+')
         for chunk in up_file.chunks():
             destination.write(chunk)
         destination.close()  # File should be closed only after all chuns are added
 
-        with open('fondecyt_backend/Docs/' + up_file.name, "rb") as docx_file:
+        with open('backendFondecyt/Docs/' + up_file.name, "rb") as docx_file:
             result = mammoth.convert_to_html(docx_file)
             rawText = mammoth.extract_raw_text(docx_file)
             html = result.value  # The generated HTML
 
-            f = open("fondecyt_backend/Docs/output.html", "wb")
+            f = open("backendFondecyt/Docs/output.html", "wb")
             f.write(html.encode('utf8'))
             f.close()
             data = {
