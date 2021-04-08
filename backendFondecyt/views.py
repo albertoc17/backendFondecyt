@@ -70,12 +70,13 @@ class Concordancia(APIView):
 
   def post(self, request, format=None):
     patron = request.POST['patron']
+    modelo = request.POST['modelo']
     # llamadas
-    data = self.PostConcordancia(patron)
+    data = self.PostConcordancia(patron, modelo)
     return Response(data, status.HTTP_201_CREATED)
 
-  def PostConcordancia(self, patron):
-    payload = {'patron': patron}
+  def PostConcordancia(self, patron, modelo):
+    payload = {'patron': patron, 'modelo': modelo}
     url = 'http://redilegra.com/concordancia'
     x = requests.post(url, data=payload)
     return x.text.encode('utf8')
