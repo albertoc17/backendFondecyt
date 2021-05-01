@@ -37,7 +37,7 @@ class FileUploadView(APIView):
                 'micro_paragraphs': self.PostRedilegra(rawText, html,  "micro_paragraphs"),
                 'gerunds': self.PostRedilegra(rawText, html, "gerunds"),
                 'fs_person': self.PostRedilegra(rawText, html, "fs_person"),
-                'concordancia': self.PostRedilegra(rawText, html, "concordancia"),
+                'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
                 'analisis_concordancia': self.PostRedilegra(rawText, html, "analisis_concordancia"),
                 'proposito': self.PostRedilegra(rawText, html, "proposito"),
                 'conectores': self.PostRedilegra(rawText, html, "conectores"),
@@ -77,6 +77,6 @@ class Concordancia(APIView):
 
   def PostConcordancia(self, patron, modelo):
     payload = {'patron': patron, 'modelo': modelo}
-    url = 'http://redilegra.com/concordancia'
+    url = 'http://redilegra.com/Concordancia'
     x = requests.post(url, data=payload)
     return x.text.encode('utf8')
