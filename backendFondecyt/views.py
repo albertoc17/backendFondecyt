@@ -44,16 +44,6 @@ class FileUploadView(APIView):
             }
         return Response(data, status.HTTP_201_CREATED)
 
-    # def PostRedilegra(self, rawtext, html, function):
-    #     payload = {
-    #         'texto': rawtext.value,
-    #         'funcion': function,
-    #         'html': html,
-    #     }
-    #     url = 'http://redilegra.com/palabra'
-    #     x = requests.post(url, data=payload)
-    #     return x.text.encode('utf8')
-
     def PostRedilegra(self, rawtext, html, endpoint):
       payload = {
         'texto': rawtext.value,
@@ -64,6 +54,16 @@ class FileUploadView(APIView):
       # print(x.text.encode('utf8'))
       return json.loads(x.text.encode('utf8'))
 
+    # def PostRedilegra(self, rawtext, html, function):
+    #     payload = {
+    #         'texto': rawtext.value,
+    #         'funcion': function,
+    #         'html': html,
+    #     }
+    #     url = 'http://redilegra.com/palabra'
+    #     x = requests.post(url, data=payload)
+    #     return x.text.encode('utf8')
+
 
 class Concordancia(APIView):
   parser_classes = (MultiPartParser, FormParser)
@@ -71,7 +71,6 @@ class Concordancia(APIView):
   def post(self, request, format=None):
     patron = request.POST['patron']
     modelo = request.POST['modelo']
-    # llamadas
     data = self.PostConcordancia(patron, modelo)
     return Response(data, status.HTTP_201_CREATED)
 
