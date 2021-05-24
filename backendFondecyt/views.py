@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 import requests
 import mammoth
-
+import json
 
 class FileUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -30,17 +30,17 @@ class FileUploadView(APIView):
             f.write(html.encode('utf8'))
             f.close()
             data = {
-                'html': html.encode('utf8'),
-                'passive_voice': self.PostRedilegra(rawText, html, "passive_voice"),
-                'statistics': self.PostRedilegra(rawText, html, "statistics"),
-                'oraciones': self.PostRedilegra(rawText, html, "oraciones"),
-                'micro_paragraphs': self.PostRedilegra(rawText, html,  "micro_paragraphs"),
-                'gerunds': self.PostRedilegra(rawText, html, "gerunds"),
-                'fs_person': self.PostRedilegra(rawText, html, "fs_person"),
-                'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
-                'analisis_concordancia': self.PostRedilegra(rawText, html, "analisis_concordancia"),
-                'proposito': self.PostRedilegra(rawText, html, "proposito"),
-                'conectores': self.PostRedilegra(rawText, html, "conectores"),
+              'html': html.encode('utf8'),
+              'passive_voice': self.PostRedilegra(rawText, html, "passive_voice"),
+              'statistics': self.PostRedilegra(rawText, html, "statistics"),
+              'oraciones': self.PostRedilegra(rawText, html, "oraciones"),
+              'micro_paragraphs': self.PostRedilegra(rawText, html,  "micro_paragraphs"),
+              'gerunds': self.PostRedilegra(rawText, html, "gerunds"),
+              'fs_person': self.PostRedilegra(rawText, html, "fs_person"),
+              'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
+              'analisis_concordancia': self.PostRedilegra(rawText, html, "analisis_concordancia"),
+              'proposito': self.PostRedilegra(rawText, html, "proposito"),
+              'conectores': self.PostRedilegra(rawText, html, "conectores"),
             }
         return Response(data, status.HTTP_201_CREATED)
 
@@ -55,14 +55,14 @@ class FileUploadView(APIView):
     #     return x.text.encode('utf8')
 
     def PostRedilegra(self, rawtext, html, endpoint):
-        payload = {
-            'texto': rawtext.value,
-            'html': html,
-        }
-        url = 'http://redilegra.com/'+endpoint
-        x = requests.post(url, data=payload)
-        # print(x.text.encode('utf8'))
-        return x.text.encode('utf8')
+      payload = {
+        'texto': rawtext.value,
+        'html': html,
+      }
+      url = 'http://redilegra.com/'+endpoint
+      x = requests.post(url, data=payload)
+      # print(x.text.encode('utf8'))
+      return json.loads(x.text.encode('utf8'))
 
 
 class Concordancia(APIView):
@@ -79,4 +79,4 @@ class Concordancia(APIView):
     payload = {'patron': patron, 'modelo': modelo}
     url = 'http://redilegra.com/Concordancia'
     x = requests.post(url, data=payload)
-    return x.text.encode('utf8')
+    return json.loads(x.text.encode('utf8'))
