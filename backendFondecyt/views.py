@@ -1,3 +1,4 @@
+from typing import Text
 from django.shortcuts import render
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import MultiPartParser
@@ -77,5 +78,36 @@ class Concordancia(APIView):
   def PostConcordancia(self, patron, modelo):
     payload = {'patron': patron, 'modelo': modelo}
     url = 'http://redilegra.com/Concordancia'
+    x = requests.post(url, data=payload)
+    return json.loads(x.text.encode('utf8'))
+
+class PostTextRedilegra(APIView):
+  parser_classes = (MultiPartParser, FormParser)
+
+  def post(self, request, format=None):
+    print(request)
+    html = request.POST['html']
+    text = request.POST['text']
+    data = {
+              'html': html.encode('utf8'),
+              'passive_voice': self.PostRedilegra(text, html, "passive_voice"),
+              'statistics': self.PostRedilegra(text, html, "statistics"),
+              'oraciones': self.PostRedilegra(text, html, "oraciones"),
+              'micro_paragraphs': self.PostRedilegra(text, html,  "micro_paragraphs"),
+              'gerunds': self.PostRedilegra(text, html, "gerunds"),
+              'fs_person': self.PostRedilegra(text, html, "fs_person"),
+              'sentence_complexity': self.PostRedilegra(text, html, "sentence_complexity"),
+              'analisis_concordancia': self.PostRedilegra(text, html, "analisis_concordancia"),
+              'proposito': self.PostRedilegra(text, html, "proposito"),
+              'conectores': self.PostRedilegra(text, html, "conectores"),
+            }
+    return Response(data, status.HTTP_201_CREATED)
+
+  def PostRedilegra(self, rawtext, html, endpoint):
+    payload = {
+      'texto': rawtext,
+      'html': html,
+    }
+    url = 'http://redilegra.com/'+endpoint
     x = requests.post(url, data=payload)
     return json.loads(x.text.encode('utf8'))
