@@ -38,10 +38,11 @@ class FileUploadView(APIView):
               'micro_paragraphs': self.PostRedilegra(rawText, html,  "micro_paragraphs"),
               'gerunds': self.PostRedilegra(rawText, html, "gerunds"),
               'fs_person': self.PostRedilegra(rawText, html, "fs_person"),
-              'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
               'analisis_concordancia': self.PostRedilegra(rawText, html, "analisis_concordancia"),
               'proposito': self.PostRedilegra(rawText, html, "proposito"),
               'conectores': self.PostRedilegra(rawText, html, "conectores"),
+              'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
+              'lecturabilidad_parrafo': self.PostRedilegra(rawText, html, "lecturabilidad_parrafo"),
             }
         return Response(data, status.HTTP_201_CREATED)
 
