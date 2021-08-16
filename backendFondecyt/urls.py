@@ -21,5 +21,6 @@ urlpatterns = [
     path('api/v1.0/',include('query.urls')),
     path('api/FileUploadView', views.FileUploadView.as_view()),
     path('api/Concordancia', views.Concordancia.as_view()),
-    path('api/PostTextRedilegra', views.PostTextRedilegra.as_view())
+    path('api/SendText', views.SendText.as_view()),
+    path('api/Proposito', views.Proposito.as_view())
 ]

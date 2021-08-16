@@ -56,6 +56,56 @@ class FileUploadView(APIView):
     # print(x.text.encode('utf8'))
     return json.loads(x.text.encode('utf8'))
 
+
+
+class SendText(APIView):
+  parser_classes = (MultiPartParser, FormParser)
+
+  def post(self, request, format=None):
+    html = request.POST['html']
+    rawText = request.POST['text']
+    data = {
+      'html': html.encode('utf8'),
+      'passive_voice': self.PostRedilegra(rawText, html, "passive_voice"),
+      'statistics': self.PostRedilegra(rawText, html, "statistics"),
+      'oraciones': self.PostRedilegra(rawText, html, "oraciones"),
+      'micro_paragraphs': self.PostRedilegra(rawText, html,  "micro_paragraphs"),
+      'gerunds': self.PostRedilegra(rawText, html, "gerunds"),
+      'fs_person': self.PostRedilegra(rawText, html, "fs_person"),
+      'analisis_concordancia': self.PostRedilegra(rawText, html, "analisis_concordancia"),
+      'proposito': self.PostRedilegra(rawText, html, "proposito"),
+      'conectores': self.PostRedilegra(rawText, html, "conectores"),
+      'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
+      'lecturabilidad_parrafo': self.PostRedilegra(rawText, html, "lecturabilidad_parrafo"),
+    }
+    return Response(data, status.HTTP_201_CREATED)
+
+  def PostRedilegra(self, rawtext, html, endpoint):
+    payload = {'texto': rawtext, 'html': html}
+    url = 'http://redilegra.com/'+endpoint
+    x = requests.post(url, data=payload)
+    return json.loads(x.text.encode('utf8'))
+
+
+
+class Proposito(APIView):
+  parser_classes = (MultiPartParser, FormParser)
+
+  def post(self, request, format=None):
+    html = request.POST['html']
+    text = request.POST['text']
+    macromovida = request.POST['macromovida']
+    data = {'proposito': self.PostRedilegra(text, html, "proposito", macromovida)}
+    return Response(data, status.HTTP_201_CREATED)
+
+  def PostRedilegra(self, rawtext, html, endpoint, macromovida):
+    payload = {'texto': rawtext, 'html': html, 'proposito': macromovida}
+    url = 'http://redilegra.com/'+endpoint
+    x = requests.post(url, data=payload)
+    return json.loads(x.text.encode('utf8'))
+
+
+
 class Concordancia(APIView):
   parser_classes = (MultiPartParser, FormParser)
 
@@ -68,38 +118,5 @@ class Concordancia(APIView):
   def PostConcordancia(self, patron, modelo):
     payload = {'patron': patron, 'modelo': modelo}
     url = 'http://redilegra.com/Concordancia'
-    x = requests.post(url, data=payload)
-    return json.loads(x.text.encode('utf8'))
-
-class PostTextRedilegra(APIView):
-  parser_classes = (MultiPartParser, FormParser)
-
-  def post(self, request, format=None):
-    print(request)
-    html = request.POST['html']
-    text = request.POST['text']
-    macromovida = request.POST['macromovida']
-    data = {
-      'html': html.encode('utf8'),
-      'proposito': self.PostRedilegra(text, html, "proposito", macromovida),
-      # 'statistics': self.PostRedilegra(text, html, "statistics"),
-      # 'oraciones': self.PostRedilegra(text, html, "oraciones"),
-      # 'micro_paragraphs': self.PostRedilegra(text, html,  "micro_paragraphs"),
-      # 'gerunds': self.PostRedilegra(text, html, "gerunds"),
-      # 'fs_person': self.PostRedilegra(text, html, "fs_person"),
-      # 'sentence_complexity': self.PostRedilegra(text, html, "sentence_complexity"),
-      # 'analisis_concordancia': self.PostRedilegra(text, html, "analisis_concordancia"),
-      # 'proposito': self.PostRedilegra(text, html, "proposito"),
-      # 'conectores': self.PostRedilegra(text, html, "conectores"),
-    }
-    return Response(data, status.HTTP_201_CREATED)
-
-  def PostRedilegra(self, rawtext, html, endpoint, macromovida):
-    payload = {
-      'texto': rawtext,
-      'html': html,
-      'proposito': macromovida
-    }
-    url = 'http://redilegra.com/'+endpoint
     x = requests.post(url, data=payload)
     return json.loads(x.text.encode('utf8'))
