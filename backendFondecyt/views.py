@@ -9,6 +9,7 @@ from rest_framework.response import Response
 import requests
 import mammoth
 import json
+import os
 
 class FileUploadView(APIView):
   parser_classes = (MultiPartParser, FormParser)
@@ -51,6 +52,7 @@ class FileUploadView(APIView):
       'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
       'lecturabilidad_parrafo': self.PostRedilegra(rawText, html, "lecturabilidad_parrafo"),
     }
+    os.remove('backendFondecyt/Docs/' + up_file.name)
     return Response(data, status.HTTP_201_CREATED)
 
   def PostRedilegra(self, rawtext, html, endpoint):
