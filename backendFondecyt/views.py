@@ -6,38 +6,51 @@ from rest_framework.parsers import FormParser
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+import json
 import requests
 import mammoth
-import json
 import os
+#import re
+import subprocess
+#import win32com.client as win32
+#from win32com.client import constants
 
 class FileUploadView(APIView):
   parser_classes = (MultiPartParser, FormParser)
 
   def post(self, request, format=None):
     # tipo_analisis = request.POST['tipo_analisis']
-    up_file = request.FILES['file']
-    destination = open('backendFondecyt/Docs/' + up_file.name, 'wb+')
-    for chunk in up_file.chunks():
+    uploaded_file = request.FILES['file']
+    file_name = uploaded_file.name
+    file_extension = file_name.split(".")[1]
+
+    destination = open('backendFondecyt/Docs/' + file_name, 'wb+')
+    for chunk in uploaded_file.chunks():
       destination.write(chunk)
-    destination.close()  # File should be closed only after all chuns are added
-    if (up_file.name.split(".")[1] == "docx"):
-      with open('backendFondecyt/Docs/' + up_file.name, "rb") as docx_file:
+    destination.close()
+    
+    if (file_extension == "doc"):
+      file_name = self.converDocToDocx(file_name)
+      
+    if (file_extension == "doc" or file_extension == "docx"):
+      with open('backendFondecyt/Docs/' + file_name, "rb") as docx_file:
         rawText = mammoth.extract_raw_text(docx_file)
         rawText = rawText.value
         result = mammoth.convert_to_html(docx_file)
         html = result.value
-    else:
-        txt_file = open('backendFondecyt/Docs/' + up_file.name, "r", encoding="utf-8")
+
+    if (file_extension == "txt"):
+        txt_file = open('backendFondecyt/Docs/' + file_name, "r", encoding="utf-8")
         rawText = txt_file.read()
         txt_file.close()
-        txt_file = open('backendFondecyt/Docs/' + up_file.name, "r", encoding="utf-8")
+        txt_file = open('backendFondecyt/Docs/' + file_name, "r", encoding="utf-8")
         html = ""
         for line in txt_file:
           stripped_line = line.rstrip()
           if (stripped_line.strip() != ""): 
             html += "<p>" + line + "</p>"
         txt_file.close()
+
     data = {
       'html': html.encode('utf8'),
       'passive_voice': self.PostRedilegra(rawText, html, "passive_voice"),
@@ -52,7 +65,7 @@ class FileUploadView(APIView):
       'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
       'lecturabilidad_parrafo': self.PostRedilegra(rawText, html, "lecturabilidad_parrafo"),
     }
-    os.remove('backendFondecyt/Docs/' + up_file.name)
+    os.remove('backendFondecyt/Docs/' + file_name)
     return Response(data, status.HTTP_201_CREATED)
 
   def PostRedilegra(self, rawtext, html, endpoint):
@@ -65,6 +78,16 @@ class FileUploadView(APIView):
     # print(x.text.encode('utf8'))
     return json.loads(x.text.encode('utf8'))
 
+  def converDocToDocx(self, file_name):
+    lowriter = 'C:/Program Files/LibreOffice/program/swriter.exe'
+    outdir = 'backendFondecyt/Docs'
+    file_path = 'backendFondecyt/Docs/' + file_name
+    subprocess.run('"{}" --convert-to docx --outdir "{}" "{}"'.format(lowriter, outdir, file_path), shell=True)
+    os.remove('backendFondecyt/Docs/' + file_name)
+    new_docx_file_name = file_name + "x"
+    return new_docx_file_name
+
+    
 
 
 class SendText(APIView):
