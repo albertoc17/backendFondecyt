@@ -10,10 +10,7 @@ import json
 import requests
 import mammoth
 import os
-#import re
 import subprocess
-#import win32com.client as win32
-#from win32com.client import constants
 
 class FileUploadView(APIView):
   parser_classes = (MultiPartParser, FormParser)
@@ -86,8 +83,6 @@ class FileUploadView(APIView):
     os.remove('./backendFondecyt/Docs/' + file_name)
     new_docx_file_name = file_name + "x"
     return new_docx_file_name
-
-    
 
 
 class SendText(APIView):
