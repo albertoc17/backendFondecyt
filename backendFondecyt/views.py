@@ -79,11 +79,11 @@ class FileUploadView(APIView):
     return json.loads(x.text.encode('utf8'))
 
   def converDocToDocx(self, file_name):
-    lowriter = 'C:/Program Files/LibreOffice/program/swriter.exe'
-    outdir = 'backendFondecyt/Docs'
-    file_path = 'backendFondecyt/Docs/' + file_name
+    lowriter = 'libreoffice'
+    outdir = './backendFondecyt/Docs'
+    file_path = './backendFondecyt/Docs/' + file_name
     subprocess.run('"{}" --convert-to docx --outdir "{}" "{}"'.format(lowriter, outdir, file_path), shell=True)
-    os.remove('backendFondecyt/Docs/' + file_name)
+    os.remove('./backendFondecyt/Docs/' + file_name)
     new_docx_file_name = file_name + "x"
     return new_docx_file_name
 
