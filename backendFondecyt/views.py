@@ -109,6 +109,7 @@ class SendText(APIView):
       'conectores': self.PostRedilegra(rawText, html, "conectores"),
       'sentence_complexity': self.PostRedilegra(rawText, html, "sentence_complexity"),
       'lecturabilidad_parrafo': self.PostRedilegra(rawText, html, "lecturabilidad_parrafo"),
+      'proposito': self.PostRedilegra(rawText, html, "proposito"),
     }
     return Response(data, status.HTTP_201_CREATED)
 
