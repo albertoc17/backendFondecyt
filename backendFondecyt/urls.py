@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/FileUploadView', views.FileUploadView.as_view()),
     path('api/Concordancia', views.Concordancia.as_view()),
     path('api/SendText', views.SendText.as_view()),
+    path('api/SendText2', views.SendText2.as_view()),
     path('api/Proposito', views.Proposito.as_view())
 ]
