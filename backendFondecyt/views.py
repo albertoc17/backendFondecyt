@@ -30,47 +30,24 @@ class FileUploadView(APIView):
       file_name = self.converDocToDocx(file_name)
     if (file_extension == "doc" or file_extension == "docx"):
       with open('backendFondecyt/Docs/' + file_name, "rb") as docx_file:
-        rawText = mammoth.extract_raw_text(docx_file)
-        rawText = rawText.value
-        result = mammoth.convert_to_html(docx_file)
-        html = result.value
+        rawText = mammoth.extract_raw_text(docx_file).value
+        html = mammoth.convert_to_html(docx_file).value
     if (file_extension == "txt"):
-        txt_file = open('backendFondecyt/Docs/' + file_name, "r", encoding="utf-8")
-        rawText = txt_file.read()
-        txt_file.close()
-        txt_file = open('backendFondecyt/Docs/' + file_name, "r", encoding="utf-8")
-        html = ""
-        for line in txt_file:
-          stripped_line = line.rstrip()
-          if (stripped_line.strip() != ""): 
-            html += "<p>" + line + "</p>"
-        txt_file.close()
-    data = {
-      'html': html.encode('utf8'),
-      'passive_voice': self.postAnalisis(rawText, html, "passive_voice"),
-      'statistics': self.postAnalisis(rawText, html, "statistics"),
-      'oraciones': self.postAnalisis(rawText, html, "oraciones"),
-      'micro_paragraphs': self.postAnalisis(rawText, html,  "micro_paragraphs"),
-      'gerunds': self.postAnalisis(rawText, html, "gerunds"),
-      'fs_person': self.postAnalisis(rawText, html, "fs_person"),
-      'analisis_concordancia': self.postAnalisis(rawText, html, "analisis_concordancia"),
-      'proposito': self.postAnalisis(rawText, html, "proposito"),
-      'conectores': self.postAnalisis(rawText, html, "conectores"),
-      'sentence_complexity': self.postAnalisis(rawText, html, "sentence_complexity"),
-      'lecturabilidad_parrafo': self.postAnalisis(rawText, html, "lecturabilidad_parrafo"),
-    }
+      txt_file = open('backendFondecyt/Docs/' + file_name, "r", encoding="utf-8")
+      rawText = txt_file.read()
+      html = ""
+      for line in txt_file:
+        stripped_line = line.rstrip()
+        if (stripped_line.strip() != ""): 
+          html += "<p>" + line + "</p>"
+      txt_file.close()
+    
+    payload = {'texto': rawText, 'html': html}
+    data = requests.post('http://redilegra.com/general', data=payload)
+    data = json.loads(data.text.encode('utf8'))
     os.remove('backendFondecyt/Docs/' + file_name)
     return Response(data, status.HTTP_201_CREATED)
-
-  def postAnalisis(self, rawtext, html, endpoint):
-    payload = {
-      'texto': rawtext,
-      'html': html,
-    }
-    url = 'http://redilegra.com/'+endpoint
-    x = requests.post(url, data=payload)
-    # print(x.text.encode('utf8'))
-    return json.loads(x.text.encode('utf8'))
+    
 
   def converDocToDocx(self, file_name):
     lowriter = 'libreoffice'
@@ -146,7 +123,6 @@ class Proposito(APIView):
     url = 'http://redilegra.com/'+endpoint
     x = requests.post(url, data=payload)
     return json.loads(x.text.encode('utf8'))
-
 
 
 class Concordancia(APIView):
