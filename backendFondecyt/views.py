@@ -69,7 +69,6 @@ class SendText(APIView):
     payload = { 'html': html, 'texto': rawText }
     data = requests.post('http://redilegra.com/general', data=payload)
     data = json.loads(data.text.encode('utf8'))
-    os.remove('backendFondecyt/Docs/' + file_name)
     return Response(data, status.HTTP_201_CREATED)
 
 class SendText2(APIView):
