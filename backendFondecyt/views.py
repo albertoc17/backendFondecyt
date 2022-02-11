@@ -65,28 +65,12 @@ class SendText(APIView):
   def post(self, request, format=None):
     html = request.POST['html']
     rawText = request.POST['text']
-    data = {
-      'html': html.encode('utf8'),
-      'statistics': self.postAnalisis(rawText, html, "statistics"),
-      'gerunds': self.postAnalisis(rawText, html, "gerunds"),
-      'oraciones': self.postAnalisis(rawText, html, "oraciones"),
-      'micro_paragraphs': self.postAnalisis(rawText, html,  "micro_paragraphs"),
-      'fs_person': self.postAnalisis(rawText, html, "fs_person"),
-      'passive_voice': self.postAnalisis(rawText, html, "passive_voice"),
-      'conectores': self.postAnalisis(rawText, html, "conectores"),
-      'conectores2': self.postAnalisis(rawText, html, "conectores2"),
-      'sentence_complexity': self.postAnalisis(rawText, html, "sentence_complexity"),
-      'lecturabilidad_parrafo': self.postAnalisis(rawText, html, "lecturabilidad_parrafo"),
-      'proposito': self.postAnalisis(rawText, html, "proposito")
-      # 'analisis_concordancia': self.postAnalisis(rawText, html, "analisis_concordancia"),
-    }
+    
+    payload = { 'html': html, 'texto': rawText }
+    data = requests.post('http://redilegra.com/general', data=payload)
+    data = json.loads(data.text.encode('utf8'))
+    os.remove('backendFondecyt/Docs/' + file_name)
     return Response(data, status.HTTP_201_CREATED)
-
-  def postAnalisis(self, rawtext, html, endpoint):
-    payload = {'texto': rawtext, 'html': html}
-    url = 'http://redilegra.com/'+endpoint
-    x = requests.post(url, data=payload)
-    return json.loads(x.text.encode('utf8'))
 
 class SendText2(APIView):
   parser_classes = (MultiPartParser, FormParser)
